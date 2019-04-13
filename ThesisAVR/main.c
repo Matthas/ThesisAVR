@@ -30,41 +30,42 @@ int main(void) {
 	sei();	/* w³¹czamy globalne przerwania */
 
 	lcd_locate(0,0);
-	lcd_str_P(PSTR("Kody pilota RC5")); /* wyœwietl napis w zerowej linii LCD */
+	lcd_str_P(PSTR("Hor: ")); /* wyœwietl napis w zerowej linii LCD */
+	lcd_locate(1,0);
+	lcd_str_P(PSTR("Ver: "));
 	/* pêtla nieskoñczona */
 	while(1) {
 
 		if(Ir_key_press_flag) {	/* jeœli odebrano prawid³owe kody z pilota */
-			if( !address ) {		/* jeœli adres == 0 */
-				//lcd_locate(1,0);
-				//lcd_str("dd");
-				lcd_locate(1,0);
-				lcd_str("key: ");
-				lcd_int(command);	// wyœwietl w drugiej linii LCD kod klawisza
-				lcd_str("   ");
+			if( address == 0b10) {		/* jeœli adres == 10  to oznacza ze jest wysylana wartosc vertical*/
+					lcd_locate(1,5);
+					lcd_str_P(PSTR("   "));
+					lcd_int(command);	// wyswietl wartosc Horizontal
 
-			}
+				}
 
 			/* jeœli wciœniêty konkretny przycik vol_up */
-			if( !address && vol_up==command ) {
-				lcd_locate(1,10);
-				lcd_str("vol_up");	/* wyœwietl jego nazwê */
+			if( address == 0b00 ) {
+					lcd_locate(0,5);
+					lcd_str_P(PSTR("   "));
+					lcd_int(command);	// wyswietl wartosc Horizontal
+					}
 
-			} else {
-				lcd_locate(1,10);
-				lcd_str("      ");	/* jeœli inny skasuj pole */
+			/*} else {
+				lcd_locate(1,5);
+				lcd_char("   ");			// jeœli inny skasuj pole Horizontal
+				lcd_locate(0,5);
+				lcd_char("   ");			// jeœli inny skasuj pole vertical
 				DDRC |= LED_PIN;		// kierunek pinu PC7 – wyjœciowy
 				DDRC &= ~KEY_PIN;		// kierunek piny PC6 - wejœciowy
 				PORTC |= KEY_PIN;		// podci¹gamy pin klawisza do VCC
-			}
+			}*/
 
-			/* wyzerowanie flagi odbioru oraz wartoœci odebranych kodów */
-			Ir_key_press_flag=0;
-			command=0xff;
-			address=0xff;
-
+		/* wyzerowanie flagi odbioru oraz wartoœci odebranych kodów */
+		Ir_key_press_flag=0;
+		command=0xff;
+		address=0xff;
 		}
 
-	}
-
+	}  //while
 }
